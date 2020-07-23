@@ -1,0 +1,27 @@
+{
+  "name": "typescript-2020",
+  "version": "1.0.0",
+  "description": "TypeScript-Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server",
+    "nodemon": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CarlosCabreraGentile/TypeScript-2020.git"
+  },
+  "author": "Carlos Cabrera Gentile",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CarlosCabreraGentile/TypeScript-2020/issues"
+  },
+  "homepage": "https://github.com/CarlosCabreraGentile/TypeScript-2020#readme",
+  "devDependencies": {
+    "lite-server": "^2.5.4"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
