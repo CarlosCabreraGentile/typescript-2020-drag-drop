@@ -1,4 +1,51 @@
-console.log("Helloo");
+//Project Class
+enum ProjectStatus {
+    Active,
+    Finished
+}
+
+class Project {
+    constructor(public id: string, public title: string, public description: string, public people: number, public status: ProjectStatus) { }
+}
+
+//Project State Management
+type Listener = (projects: Project[]) => void;
+
+class ProjectState {
+    private listeners: Listener[] = [];
+    private projects: Project[] = [];
+    private static instance: ProjectState;
+
+    //With private constructor guarantee this is a singleton class
+    //Singleton constructor
+    private constructor() { }
+
+    //If there is no Class instanciated, then create a new one
+    static getInstance() {
+        if (this.instance) {
+            return this.instance
+        } else {
+            this.instance = new ProjectState();
+            return this.instance;
+        }
+    }
+
+    //call this method when something changes
+    addListener(listenerFn: Listener) {
+        this.listeners.push(listenerFn);
+    }
+
+    addProject(title: string, description: string, numberOfPeople: number) {
+        const newProject = new Project(Math.random().toString(), title, description, numberOfPeople, ProjectStatus.Active);
+        this.projects.push(newProject);
+        for (const listenerFn of this.listeners) {
+            //send a copy of the original
+            listenerFn(this.projects.slice());
+        }
+    }
+}
+const projectState = ProjectState.getInstance();
+
 //Validation Inputs
 interface Validatable {
     value: string | number;
@@ -49,6 +96,7 @@ class ProjectList {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
     element: HTMLElement;
+    assignedProjects: Project[];
 
     constructor(private statusProject: 'active' | 'finished') {
         /**
@@ -59,6 +107,7 @@ class ProjectList {
 
         //Render the content
         this.hostElement = document.getElementById('app')! as HTMLDivElement;
+        this.assignedProjects = [];
 
         //extract the content of the node, the template
         const importedNode = document.importNode(this.templateElement.content, true);
@@ -66,8 +115,21 @@ class ProjectList {
         //From the node, extract specifically the section 
         this.element = importedNode.firstElementChild as HTMLElement;
         this.element.id = `${this.statusProject}-projects`;
+        projectState.addListener((projects: Project[]) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        });
         this.attach();
         this.renderContent();
+    }
+
+    private renderProjects() {
+        const listEl = document.getElementById(`${this.statusProject}-projects-list`)! as HTMLUListElement;
+        for (const assignedProject of this.assignedProjects) {
+            const listItem = document.createElement('li');
+            listItem.textContent = assignedProject.title;
+            listEl.appendChild(listItem);
+        }
     }
 
     //Heading of the section
@@ -133,7 +195,7 @@ class ProjectInput {
         const descriptionValidate: Validatable = {
             value: enteredDescription,
             required: true,
-            minLengthString: 5
+            minLengthString: 2
         };
         const peopleValidate: Validatable = {
             value: +enteredPeople,
@@ -166,6 +228,7 @@ class ProjectInput {
         if (Array.isArray(userInput)) {
             const [title, description, people] = userInput;
             console.log(title, description, people);
+            projectState.addProject(title, description, people);
             this.clearInputs();
         }
     }
