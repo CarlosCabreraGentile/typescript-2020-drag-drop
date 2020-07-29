@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "lite-server",
+    "start-webpack": "webpack-dev-server",
     "nodemon": "nodemon",
-    "build": "webpack"
+    "build": "webpack --config webpack.config.prod.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/CarlosCabreraGentile/TypeScript-2020#readme",
   "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
     "lite-server": "^2.5.4",
     "ts-loader": "^8.0.1",
     "typescript": "^3.9.7",
